@@ -1,0 +1,30 @@
+# server配置
+server:
+  port: 8080
+  servlet:
+    context-path: /
+    session:
+      timeout: 864000
+      # session 过期时间
+
+# 连接池配置
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      url: jdbc:mysql:///esdllm
+      username: root
+      password: aa152773652
+      driver-class-name: com.mysql.cj.jdbc.Driver
+
+# mybatis-plus的配置
+mybatis-plus:
+  type-aliases-package: com.esdllm.model
+  global-config:
+    db-config:
+      logic-delete-field: isDelete  #全局逻辑删除
+      logic-delete-value: 1 # 逻辑已删除值
+      logic-not-delete-value: 0 # 逻辑未删除值
+      table-prefix:  # 设置表的前缀
+  configuration:
+    map-underscore-to-camel-case: true #开启驼峰命名
