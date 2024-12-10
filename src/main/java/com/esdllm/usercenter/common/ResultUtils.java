@@ -30,4 +30,37 @@ public class ResultUtils {
     public static <T> BaseResponse<T> error(ErrorCode errorCode) {
         return new BaseResponse<>(errorCode);
     }
+
+    /**
+     * 失败
+     * @param errorCode
+     * @param message
+     * @param description
+     * @return
+     * @param <T>
+     */
+    public static <T> BaseResponse<T> error(ErrorCode errorCode,String message,String description) {
+        return new BaseResponse<>(errorCode.getCode(),null,message,description);
+    }
+    /**
+     * 失败
+     * @param errorCode
+     * @param description
+     * @return
+     * @param <T>
+     */
+    public static <T> BaseResponse<T> error(ErrorCode errorCode,String description) {
+        return new BaseResponse<>(errorCode.getCode(),null,errorCode.getMessage(),description);
+    }
+    /**
+     * 失败
+     * @param Code
+     * @param message
+     * @param description
+     * @return
+     * @param <T>
+     */
+    public static <T> BaseResponse<T> error(int Code,String message,String description) {
+        return new BaseResponse<>(Code,null,message,description);
+}
 }

@@ -5,6 +5,7 @@ import com.esdllm.usercenter.common.BaseResponse;
 import com.esdllm.usercenter.common.ErrorCode;
 import com.esdllm.usercenter.common.ResultUtils;
 import com.esdllm.usercenter.contant.UserContant;
+import com.esdllm.usercenter.exception.BusinessException;
 import com.esdllm.usercenter.model.User;
 import com.esdllm.usercenter.model.request.UserLoginRequest;
 import com.esdllm.usercenter.model.request.UserRegisterRequest;
@@ -14,8 +15,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.prefs.BackingStoreException;
 
 /**
  * 类名 : UserController
@@ -31,7 +32,8 @@ import java.util.List;
  * 用户接口
  */
 @RestController
-@RequestMapping("api/user")
+@RequestMapping("/user")
+@CrossOrigin(origins = {"http://localhost:5173"},allowCredentials = "true")
 public class UserController {
     /**
      * 用户服务对象，用于处理用户相关的业务逻辑
@@ -49,7 +51,8 @@ public class UserController {
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         // 检查请求对象是否为空
         if (userRegisterRequest == null) {
-            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
+        //    return ResultUtils.error(ErrorCode.PARAMS_ERROR);
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数为空");
         }
         // 获取请求中的用户账号、密码和确认密码
         String userAccount = userRegisterRequest.getUserAccount();
@@ -58,7 +61,7 @@ public class UserController {
         String inspectionCode = userRegisterRequest.getInspectionCode();
         // 检查用户账号、密码和确认密码是否为空
         if (StringUtils.isAnyBlank(userAccount, userPassword, checkPassword, inspectionCode)) {
-            return ResultUtils.error(ErrorCode.PARAMS_ERROR);
+            return ResultUtils.error(ErrorCode.PARAMS_ERROR,"请求参数为空");
         }
         // 调用用户服务的注册方法，返回注册成功的用户ID
         Long result = userService.userRegister(userAccount, userPassword, checkPassword,
@@ -77,16 +80,14 @@ public class UserController {
     public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         // 检查请求对象是否为空
         if (userLoginRequest == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数为空");
         }
         // 获取请求中的用户账号和密码
         String userAccount = userLoginRequest.getUserAccount();
         String userPassword = userLoginRequest.getUserPassword();
-        System.out.println(userAccount);
-        System.out.println(userPassword);
         // 检查用户账号和密码是否为空
         if (StringUtils.isAnyBlank(userAccount, userPassword)) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数为空");
         }
         // 调用用户服务的登录方法，返回登录成功的用户对象
         User user = userService.userLogin(userAccount, userPassword, request);
@@ -103,7 +104,7 @@ public class UserController {
     public BaseResponse<Integer> userLogout(HttpServletRequest request) {
         // 检查请求对象是否为空
         if (request == null) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"请求参数为空");
         }
         //TODO 校验用户是否合法
 
@@ -123,7 +124,7 @@ public class UserController {
     public BaseResponse<List<User>> searchUsers(String username,HttpServletRequest request) {
         //鉴权，仅管理员可查询
         if(!isAdmin(request)) {
-            return null;
+            throw new BusinessException(ErrorCode.NO_AUTH,"没有管理员权限");
         }
 
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
@@ -138,7 +139,7 @@ public class UserController {
       /**
      * 删除用户接口
      *
-     * @param id 用户ID
+     * @param id 用户id
      * @param request HttpServletRequest对象，用于获取session
      * @return 删除成功返回true，删除失败返回false
      */
@@ -146,11 +147,11 @@ public class UserController {
     public BaseResponse<Boolean> deleteUser(@RequestBody Long id, HttpServletRequest request) {
         //鉴权，仅管理员可查询
         if(!isAdmin(request)) {
-            return null;
+            throw new BusinessException(ErrorCode.NO_AUTH,"没有删除权限");
         }
         //检查id是否合法
         if(id <= 0) {
-            return null;
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"id为空！");
         }
         //调用用户服务的删除方法，返回删除结果
         boolean byId = userService.removeById(id);
@@ -167,12 +168,14 @@ public class UserController {
         Object userObject = request.getSession().getAttribute(UserContant.User_LOGIN_STATE);
         User currentUser = (User) userObject;
         if(currentUser == null) {
-            return null;
+            throw new BusinessException(ErrorCode.NOT_LOGIN,"用户未登录");
         }
         Long userId = currentUser.getId();
         //TODO 检验用户是否合法
         User user = userService.getById(userId);
         User safetyUser = userService.getSafetyUser(user);
+        //将新查到的数据更新到session中
+        request.getSession().setAttribute(UserContant.User_LOGIN_STATE,safetyUser);
         return ResultUtils.success(safetyUser);
     }
 

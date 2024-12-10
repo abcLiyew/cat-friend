@@ -2,10 +2,11 @@
 server:
   port: 8080
   servlet:
-    context-path: /
+    context-path: /api
     session:
       timeout: 864000
       # session 过期时间
+
 
 # 连接池配置
 spring:
