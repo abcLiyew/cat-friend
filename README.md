@@ -62,6 +62,7 @@ mvn spring-boot:run
 或者使用IDE运行项目：
 打开/src/main/java/com/esdllm/usercenter/Main.java文件，运行main方法。
 ## API 文档
+> 用户中心前端请点击<a href=https://github.com/abcLiyew/usercenter-font>此处</a>
 ### 用户注册
 - URL: `/api/user/register`
 - 方法: `POST`
