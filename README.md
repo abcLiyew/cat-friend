@@ -62,16 +62,17 @@ mvn spring-boot:run
 或者使用IDE运行项目：
 打开/src/main/java/com/esdllm/usercenter/Main.java文件，运行main方法。
 ## API 文档
+> 用户中心前端请点击<a href=https://github.com/abcLiyew/usercenter-font>此处</a>
 ### 用户注册
 - URL: `/api/user/register`
 - 方法: `POST`
 - 请求体:
 ```json
 {
-  "username": "test", #用户名
-  "password": "123456",#密码
-  "checkPassword": "123456",#确认密码
-  "instructionCode": 2 #检验码
+  "username": "test", //用户名
+  "password": "123456",//密码
+  "checkPassword": "123456",//确认密码
+  "instructionCode": 2 //检验码
 }
 ```
 - 响应实例：
@@ -88,8 +89,8 @@ mvn spring-boot:run
 - 请求体:
 - ```json
   {
-    "username": "test", #用户名
-    "password": "123456" #密码
+    "username": "test", //用户名
+    "password": "123456" //密码
   }
   ```
   - 响应实例：
@@ -100,7 +101,7 @@ mvn spring-boot:run
   "data": {
     "id": 123456789,
     "userAccount": "testuser",
-    "userPassword": "******",
+    "userPassword": null,
     "phone": null,
     "checkPassword": null,
     "inspectionCode": null,
@@ -133,9 +134,11 @@ mvn spring-boot:run
 ### 用户搜索
 - URL: `/api/user/search`
 - 方法: `GET`
-- 请求参数: 
-| 参数名 | 类型 | 是否必填 |描述|
-|userName|String|是|用户名|
+- 请求参数:
+
+| 参数名      | 类型     | 是否必填 | 描述   |
+|----------|--------|------|------|
+| userName | String | 是    | 用户名  |
 - 响应实例：
 ```json
 {
@@ -145,7 +148,7 @@ mvn spring-boot:run
     {
       "id": 123456789,
       "userAccount": "testuser",
-      "userPassword": "******",
+      "userPassword": null,
       "phone": null,
       "checkPassword": null,
       "inspectionCode": null,
@@ -154,7 +157,7 @@ mvn spring-boot:run
       "isDelete": 0,
       "role": 0,
       "profilePhoto": null,
-      "introduction": null,
+      "introduction": 2,
       "tags": null,
       "email": null,
       "age": null,
@@ -164,7 +167,7 @@ mvn spring-boot:run
     {
       "id": 987654321,
       "userAccount": "testuser2",
-      "userPassword": "******",
+      "userPassword": null,
       "phone": null,
       "checkPassword": null,
       "inspectionCode": null,
@@ -189,7 +192,7 @@ mvn spring-boot:run
 - 请求体:
 ```json
 {
-  "id": 123456789 #用户id
+  "id": 123456789 //用户id
 }
 ```
 - 响应实例：
