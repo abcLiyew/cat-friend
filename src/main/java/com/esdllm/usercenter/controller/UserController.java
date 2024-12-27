@@ -33,7 +33,7 @@ import java.util.prefs.BackingStoreException;
  */
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = {"http://localhost:5173"},allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:5173","http://localhost:5174","http://localhost:3000"},allowCredentials = "true")
 public class UserController {
     /**
      * 用户服务对象，用于处理用户相关的业务逻辑
@@ -154,8 +154,12 @@ public class UserController {
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"id为空！");
         }
         //调用用户服务的删除方法，返回删除结果
-        boolean byId = userService.removeById(id);
-        return ResultUtils.success(byId);
+        int rows = userService.deleteById(id);
+        boolean byId = rows > 0;
+        if(!byId) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"删除失败！");
+        }
+        return ResultUtils.success(true);
     }
 
     /**

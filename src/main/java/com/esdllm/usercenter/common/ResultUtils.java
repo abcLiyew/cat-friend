@@ -18,7 +18,7 @@ public class ResultUtils {
      * @return {@link BaseResponse}<{@link T}>
      */
     public static <T> BaseResponse<T> success(T data) {
-        return new BaseResponse<>(0, data, "ok");
+        return new BaseResponse<>(ErrorCode.SUCCESS, data);
     }
     /**
      * 失败

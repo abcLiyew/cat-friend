@@ -47,4 +47,6 @@ public interface UserService extends IService<User> {
      * @return 0 表示成功, 非0 表示失败
      */
     int userLogout( HttpServletRequest request );
+
+    int deleteById(Long id);
 }

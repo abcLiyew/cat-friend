@@ -179,6 +179,27 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         request.getSession().removeAttribute(UserContant.User_LOGIN_STATE);
         return 1;
     }
+
+    @Override
+    public int deleteById(Long id) {
+        if(id <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "参数错误");
+        }
+        User user = userMapper.selectById(id);
+        if(user == null) {
+            throw new BusinessException(ErrorCode.NULL_ERROR, "用户不存在");
+        }
+        if(user.getUserRole() == 1) {
+            throw new BusinessException(ErrorCode.NO_AUTH,"不能删除管理员");
+        }
+
+        int rows = userMapper.deleteById(id);
+        if(rows > 0) {
+            return rows;
+        } else {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR,"删除失败");
+        }
+    }
 }
 
 

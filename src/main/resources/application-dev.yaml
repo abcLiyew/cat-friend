@@ -1,0 +1,11 @@
+# 连接池配置
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql:///esdllm
+    username: root
+    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jackson:
+    generator:
+      write-numbers-as-strings: true
