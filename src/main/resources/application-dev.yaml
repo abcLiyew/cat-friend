@@ -4,7 +4,7 @@ spring:
     type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql:///esdllm
     username: root
-    password: aa152773652
+    password:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jackson:
     generator:
