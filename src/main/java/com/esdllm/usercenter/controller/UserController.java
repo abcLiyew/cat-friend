@@ -16,7 +16,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.prefs.BackingStoreException;
 
 /**
  * 类名 : UserController
@@ -152,6 +151,15 @@ public class UserController {
         //检查id是否合法
         if(id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"id为空！");
+        }
+        Object user = request.getSession().getAttribute(UserContant.User_LOGIN_STATE);
+        User currentUser = (User) user;
+        if(currentUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN,"用户未登录");
+        }
+        //检查是否为自己
+        if(id.equals(currentUser.getId())) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR,"不能删除自己！");
         }
         //调用用户服务的删除方法，返回删除结果
         int rows = userService.deleteById(id);
