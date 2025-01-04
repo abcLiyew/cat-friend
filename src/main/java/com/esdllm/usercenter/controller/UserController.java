@@ -32,7 +32,6 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/user")
-@CrossOrigin(origins = {"http://localhost:5173","http://localhost:5174","http://localhost:3000"},allowCredentials = "true")
 public class UserController {
     /**
      * 用户服务对象，用于处理用户相关的业务逻辑

@@ -3,6 +3,8 @@ package com.esdllm.usercenter;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 /**
  * 类名 : ${NAME}
@@ -15,8 +17,18 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @MapperScan("com.esdllm.usercenter.mapper")
-public class Main {
+public class Main  implements WebMvcConfigurer {
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
+    }
+    // 跨域问题解决
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE")
+                .maxAge(3600)
+                .allowedHeaders("Origin", "Accept", "Content-Type", "Authorization")
+                .allowCredentials(true);
     }
 }
