@@ -1,5 +1,6 @@
 package com.esdllm.usercenter.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esdllm.usercenter.common.ErrorCode;
@@ -8,17 +9,20 @@ import com.esdllm.usercenter.exception.BusinessException;
 import com.esdllm.usercenter.model.User;
 import com.esdllm.usercenter.service.UserService;
 import com.esdllm.usercenter.mapper.UserMapper;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Date;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -172,6 +176,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         safetyUser.setUpdateTime(originUser.getUpdateTime());
         safetyUser.setUserRole(originUser.getUserRole());
         safetyUser.setInspectionCode(originUser.getInspectionCode());
+        safetyUser.setTags(originUser.getTags());
+        safetyUser.setProfile(originUser.getProfile());
         return safetyUser;
     }
 
@@ -200,6 +206,106 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         } else {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR,"删除失败");
         }
+    }
+
+    /**
+     * 根据标签搜索用户(内存过滤)
+     *
+     * @param tagNameList 用户必须要有的标签
+     * @return 用户列表
+     */
+    @Override
+    public List<User> searchUsersByTags(List<String> tagNameList){
+        if (CollectionUtils.isEmpty(tagNameList)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        userMapper.selectList(null);
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        List<User> userList = userMapper.selectList(queryWrapper);
+        Gson gson = new Gson();
+        return userList.stream().filter(user -> {
+            String tagsStr = user.getTags();
+            Set<String> tempTagNameSet = gson.fromJson(tagsStr, new TypeToken<Set<String>>(){}.getType());
+            tempTagNameSet = Optional.ofNullable(tempTagNameSet).orElse(new HashSet<>());
+            for (String tagName : tagNameList) {
+                if (!tempTagNameSet.contains(tagName)) {
+                    return false;
+                }
+            }
+            return true;
+        }).map(this::getSafetyUser).toList();
+    }
+
+    @Override
+    public int updateUser(User user, User loginUser) {
+        Long userId = user.getId();
+        if (userId == null || userId <= 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        //判断权限，仅管理员和自己可修改
+        if (!isAdmin(loginUser)&&!userId.equals(loginUser.getId())){
+            throw new BusinessException(ErrorCode.NO_AUTH);
+        }
+        User oldUser = userMapper.selectById(userId);
+        if (oldUser == null) {
+            throw new BusinessException(ErrorCode.NULL_ERROR);
+        }
+        return userMapper.updateById(user);
+    }
+
+    @Override
+    public User getLoginUser(HttpServletRequest request) {
+        if (request == null){
+            return null;
+        }
+        Object userObj = request.getSession().getAttribute(UserContant.User_LOGIN_STATE);
+        if (userObj == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN);
+        }
+        User currentUser = (User) userObj;
+        return getSafetyUser(currentUser);
+    }
+
+    /**
+     * 根据标签搜索用户SQL查询
+     *
+     * @param tagNameList 用户必须要有的标签
+     * @return 用户列表
+     */
+    @Deprecated
+    private List<User> searchUsersByTagsBySQL(List<String> tagNameList){
+        if (CollectionUtils.isEmpty(tagNameList)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        LambdaQueryWrapper<User> queryWrapper = new LambdaQueryWrapper<>();
+        //拼接 and 查询
+        for (String tagName : tagNameList) {
+            queryWrapper.like(User::getTags, tagName);
+        }
+        //查询
+        List<User> userList = userMapper.selectList(queryWrapper);
+        return userList.stream().map(this::getSafetyUser).toList();
+    }
+
+    /**
+     * 是否为管理员
+     * @param request 请求
+     * @return 是否为管理员
+     */
+    @Override
+    public boolean isAdmin(HttpServletRequest request) {
+        Object userObject = request.getSession().getAttribute(UserContant.User_LOGIN_STATE);
+        User user = (User) userObject;
+        return user!= null && user.getUserRole() == UserContant.ADMIN_ROLE;
+    }
+    /**
+     * 是否为管理员
+     * @param loginUser 请求
+     * @return 是否为管理员
+     */
+    @Override
+    public boolean isAdmin(User loginUser) {
+        return loginUser!= null && loginUser.getUserRole() == UserContant.ADMIN_ROLE;
     }
 }
 

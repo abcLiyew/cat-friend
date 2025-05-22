@@ -10,9 +10,12 @@ import com.esdllm.usercenter.model.User;
 import com.esdllm.usercenter.model.request.UserLoginRequest;
 import com.esdllm.usercenter.model.request.UserRegisterRequest;
 import com.esdllm.usercenter.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +35,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/user")
+@Tag(name = "用户接口", description = "用户接口")
 public class UserController {
     /**
      * 用户服务对象，用于处理用户相关的业务逻辑
@@ -46,6 +50,7 @@ public class UserController {
      * @return 注册成功返回用户ID，注册失败返回null
      */
     @PostMapping("/register")
+    @Operation(summary = "用户注册",description="参数不能为空")
     public BaseResponse<Long> userRegister(@RequestBody UserRegisterRequest userRegisterRequest) {
         // 检查请求对象是否为空
         if (userRegisterRequest == null) {
@@ -75,6 +80,7 @@ public class UserController {
      * @return 登录成功返回用户对象，登录失败返回null
      */
     @PostMapping("/login")
+    @Operation(summary = "用户登录",description="参数不能为空")
     public BaseResponse<User> userLogin(@RequestBody UserLoginRequest userLoginRequest, HttpServletRequest request) {
         // 检查请求对象是否为空
         if (userLoginRequest == null) {
@@ -99,6 +105,7 @@ public class UserController {
      * @return 登出成功返回true，登出失败返回false
      */
     @PostMapping("/logout")
+    @Operation(summary = "用户登出",description="用户退出登录")
     public BaseResponse<Integer> userLogout(HttpServletRequest request) {
         // 检查请求对象是否为空
         if (request == null) {
@@ -119,9 +126,10 @@ public class UserController {
      * @return 搜索到的用户列表
      */
     @GetMapping("/search")
+    @Operation(summary = "用户搜索",description="根据用户名搜索")
     public BaseResponse<List<User>> searchUsers(String username,HttpServletRequest request) {
         //鉴权，仅管理员可查询
-        if(!isAdmin(request)) {
+        if(!userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH,"没有管理员权限");
         }
 
@@ -141,10 +149,11 @@ public class UserController {
      * @param request HttpServletRequest对象，用于获取session
      * @return 删除成功返回true，删除失败返回false
      */
-    @PostMapping("/delete")
-    public BaseResponse<Boolean> deleteUser(@RequestBody Long id, HttpServletRequest request) {
+    @PostMapping(value = "/delete")
+    @Operation(summary = "删除用户",description="id不能为空")
+    public BaseResponse<Boolean> deleteUser(Long id, HttpServletRequest request) {
         //鉴权，仅管理员可查询
-        if(!isAdmin(request)) {
+        if(!userService.isAdmin(request)) {
             throw new BusinessException(ErrorCode.NO_AUTH,"没有删除权限");
         }
         //检查id是否合法
@@ -175,6 +184,7 @@ public class UserController {
      * @return 当前登录用户对象
      */
     @GetMapping("/current")
+    @Operation(summary = "获取当前登录用户")
     public BaseResponse<User> getCurrentUser( HttpServletRequest request) {
         Object userObject = request.getSession().getAttribute(UserContant.User_LOGIN_STATE);
         User currentUser = (User) userObject;
@@ -189,16 +199,28 @@ public class UserController {
         request.getSession().setAttribute(UserContant.User_LOGIN_STATE,safetyUser);
         return ResultUtils.success(safetyUser);
     }
+    @GetMapping("/search/tags")
+    @Operation(summary = "根据标签搜索用户",description="根据标签搜索用户")
+    public BaseResponse<List<User>> searchUsersByTags(@RequestParam(required = false) List<String> tagNameList){
+        if (CollectionUtils.isEmpty(tagNameList)){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        List<User> users = userService.searchUsersByTags(tagNameList);
+        return ResultUtils.success(users);
+    }
 
+    @PostMapping("/update")
+    @Operation(summary = "更新用户信息",description="更新用户信息")
+    public BaseResponse<Integer> updateUser(@RequestBody User user,HttpServletRequest request) {
+        //1.检验参数是否为空
+        if (user == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        //2.检验是否有权限
+        //3.更新用户信息
+        int result = userService.updateUser(user,loginUser);
 
-    /**
-     * 是否为管理员
-     * @param request 请求
-     * @return 是否为管理员
-     */
-    private boolean isAdmin(HttpServletRequest request) {
-        Object userObject = request.getSession().getAttribute(UserContant.User_LOGIN_STATE);
-        User user = (User) userObject;
-        return user!= null && user.getUserRole() == UserContant.ADMIN_ROLE;
+        return ResultUtils.success(result);
     }
 }

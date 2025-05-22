@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * @author esdllm
  * @author LiYehe
@@ -49,4 +51,37 @@ public interface UserService extends IService<User> {
     int userLogout( HttpServletRequest request );
 
     int deleteById(Long id);
+
+    /**
+     * 根据标签搜索用户
+     *
+     * @param tagsList 标签列表
+     * @return 用户列表
+     */
+    List<User> searchUsersByTags(List<String> tagsList);
+    /**
+     * 更新用户信息
+     *
+     * @param user      用户信息
+     * @param loginUser
+     * @return 更新结果
+     */
+    int updateUser(User user, User loginUser);
+
+    /**
+     * 获取当前登录用户
+     *
+     * @return 当前登录用户
+     */
+    User getLoginUser(HttpServletRequest request);
+
+    /**
+     * 是否为管理员
+     *
+     * @param request
+     * @return
+     */
+    public boolean isAdmin(HttpServletRequest request);
+
+    boolean isAdmin(User loginUser);
 }

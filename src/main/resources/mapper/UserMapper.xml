@@ -19,6 +19,7 @@
             <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
             <result property="userRole" column="user_role" jdbcType="INTEGER"/>
             <result property="inspectionCode" column="inspection_code" jdbcType="VARCHAR"/>
+            <result property="tags" column="tags" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Base_Column_List">

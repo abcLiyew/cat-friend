@@ -5,6 +5,9 @@ import com.baomidou.mybatisplus.annotation.*;
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.Date;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
 
 /**
@@ -17,6 +20,7 @@ public class User implements Serializable {
     /**
      * 用户id
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     @TableId(type = IdType.AUTO)
     private Long id;
 
@@ -86,6 +90,14 @@ public class User implements Serializable {
      */
     private String inspectionCode;
 
+    /**
+     * 个人简介
+     */
+    private String profile;
+    /**
+     * 标签列表JSON
+     */
+    private String tags;
     @Serial
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

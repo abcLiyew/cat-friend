@@ -9,7 +9,35 @@
           <option value="  &quot;checkPassword&quot;" />
           <option value="{" />
           <option value="}" />
+          <option value="  &quot;id&quot;" />
         </set>
+      </option>
+    </inspection_tool>
+    <inspection_tool class="VulnerableLibrariesLocal" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="isIgnoringEnabled" value="true" />
+      <option name="ignoredModules">
+        <list>
+          <option value="user-center" />
+          <option value="user-center" />
+          <option value="user-center" />
+          <option value="user-center" />
+        </list>
+      </option>
+      <option name="ignoredPackages">
+        <list>
+          <option value="io.netty:netty-common:4.1.113.Final" />
+          <option value="ch.qos.logback:logback-classic:1.5.8" />
+          <option value="ch.qos.logback:logback-core:1.5.8" />
+          <option value="io.netty:netty-handler:4.1.113.Final" />
+        </list>
+      </option>
+      <option name="ignoredReasons">
+        <list>
+          <option value="其他" />
+          <option value="其他" />
+          <option value="已在分支中修复" />
+          <option value="已在分支中修复" />
+        </list>
       </option>
     </inspection_tool>
   </profile>

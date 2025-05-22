@@ -3,6 +3,7 @@ package com.esdllm.usercenter;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -17,6 +18,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @SpringBootApplication
 @MapperScan("com.esdllm.usercenter.mapper")
+@EnableRedisHttpSession
 public class Main  implements WebMvcConfigurer {
     public static void main(String[] args) {
         SpringApplication.run(Main.class, args);
