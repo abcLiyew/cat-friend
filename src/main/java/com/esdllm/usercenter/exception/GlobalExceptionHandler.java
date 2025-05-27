@@ -3,6 +3,7 @@ package com.esdllm.usercenter.exception;
 import com.esdllm.usercenter.common.BaseResponse;
 import com.esdllm.usercenter.common.ErrorCode;
 import com.esdllm.usercenter.common.ResultUtils;
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * @version 1.0.1
  */
 @Slf4j
+@Hidden
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)

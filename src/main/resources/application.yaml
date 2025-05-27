@@ -3,6 +3,9 @@ server:
   port: 8080
   servlet:
     context-path: /api
+    session:
+      cookie:
+        domain:
 
 
 # mybatis-plus的配置
@@ -19,7 +22,7 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 spring:
   session:
-    # session 过期时间(分钟)
+    # session 过期时间
     timeout: 86400
     redis:
       namespace: spring:session
@@ -39,6 +42,7 @@ spring:
       port: 6379
       host: 127.0.0.1
       database: 0
+      redisson_database: 3
 
 # springdoc-openapi项目配置
 springdoc:

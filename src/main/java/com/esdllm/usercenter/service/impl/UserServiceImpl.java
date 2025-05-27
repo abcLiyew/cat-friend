@@ -2,8 +2,10 @@ package com.esdllm.usercenter.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esdllm.usercenter.common.ErrorCode;
+import com.esdllm.usercenter.common.ResultUtils;
 import com.esdllm.usercenter.contant.UserContant;
 import com.esdllm.usercenter.exception.BusinessException;
 import com.esdllm.usercenter.model.User;
@@ -16,6 +18,8 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.DigestUtils;
@@ -23,6 +27,7 @@ import org.springframework.util.DigestUtils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -42,8 +47,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     private final UserMapper userMapper;
 
-    public UserServiceImpl(@Qualifier("userMapper") UserMapper userMapper) {
+    private final RedisTemplate<String, Object> redisTemplate;
+
+    public UserServiceImpl(UserMapper userMapper,RedisTemplate<String,Object> redisTemplate) {
         this.userMapper = userMapper;
+        this.redisTemplate = redisTemplate;
     }
 
     @Override
@@ -256,7 +264,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public User getLoginUser(HttpServletRequest request) {
         if (request == null){
-            return null;
+            throw new BusinessException(ErrorCode.NOT_LOGIN);
         }
         Object userObj = request.getSession().getAttribute(UserContant.User_LOGIN_STATE);
         if (userObj == null) {
@@ -298,6 +306,31 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User user = (User) userObject;
         return user!= null && user.getUserRole() == UserContant.ADMIN_ROLE;
     }
+
+    @Override
+    public Page<User> recommendUsers(long pageSize, long pageNum, HttpServletRequest request) {
+
+        User loginUser = getLoginUser(request);
+        //如果缓存里有，直接读缓存
+        String redisKey = UserContant.redisKeyUser(loginUser.getId());
+        ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
+        Page<User> userPage = (Page<User>) opsForValue.get(redisKey);
+        if(userPage != null&&pageNum>1) {
+            return userPage;
+        }
+        //缓存中没有，查数据库
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+
+        userPage = page(new Page<>(pageNum,pageSize),queryWrapper);
+        //缓存数据
+        try {
+            opsForValue.set(redisKey,userPage,1000*60*5, TimeUnit.MILLISECONDS);
+        } catch (Exception e) {
+            log.error("redis set key error",e);
+        }
+        return userPage;
+    }
+
     /**
      * 是否为管理员
      * @param loginUser 请求

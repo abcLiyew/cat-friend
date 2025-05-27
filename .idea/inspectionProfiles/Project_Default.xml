@@ -21,6 +21,9 @@
           <option value="user-center" />
           <option value="user-center" />
           <option value="user-center" />
+          <option value="user-center" />
+          <option value="user-center" />
+          <option value="user-center" />
         </list>
       </option>
       <option name="ignoredPackages">
@@ -29,6 +32,9 @@
           <option value="ch.qos.logback:logback-classic:1.5.8" />
           <option value="ch.qos.logback:logback-core:1.5.8" />
           <option value="io.netty:netty-handler:4.1.113.Final" />
+          <option value="org.apache.tomcat.embed:tomcat-embed-core:10.1.30" />
+          <option value="net.minidev:json-smart:2.5.1" />
+          <option value="org.xmlunit:xmlunit-core:2.9.1" />
         </list>
       </option>
       <option name="ignoredReasons">
@@ -36,6 +42,9 @@
           <option value="其他" />
           <option value="其他" />
           <option value="已在分支中修复" />
+          <option value="已在分支中修复" />
+          <option value="已在分支中修复" />
+          <option value="其他" />
           <option value="已在分支中修复" />
         </list>
       </option>

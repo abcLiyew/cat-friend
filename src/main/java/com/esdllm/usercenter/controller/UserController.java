@@ -1,6 +1,7 @@
 package com.esdllm.usercenter.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.esdllm.usercenter.common.BaseResponse;
 import com.esdllm.usercenter.common.ErrorCode;
 import com.esdllm.usercenter.common.ResultUtils;
@@ -14,11 +15,15 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 类名 : UserController
@@ -33,6 +38,7 @@ import java.util.List;
 /**
  * 用户接口
  */
+@Slf4j
 @RestController
 @RequestMapping("/user")
 @Tag(name = "用户接口", description = "用户接口")
@@ -42,6 +48,9 @@ public class UserController {
      */
     @Resource
     private UserService userService;
+
+    @Resource
+    private RedisTemplate<String,Object> redisTemplate;
 
         /**
      * 用户注册接口
@@ -140,6 +149,13 @@ public class UserController {
         List<User> userList = userService.list(queryWrapper);
         List<User> list = userList.stream().peek(user -> userService.getSafetyUser(user)).toList();
         return ResultUtils.success(list);
+    }
+
+    @GetMapping("/recommend")
+    @Operation(summary = "主页推荐",description="主页推荐")
+    public BaseResponse<Page<User>> recommendUsers(long pageSize,long pageNum,HttpServletRequest request) {
+        Page<User> userPage = userService.recommendUsers(pageSize, pageNum, request);
+        return ResultUtils.success(userPage);
     }
 
       /**

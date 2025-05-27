@@ -1,5 +1,6 @@
 package com.esdllm.usercenter.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.esdllm.usercenter.model.User;
 import com.baomidou.mybatisplus.extension.service.IService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -81,7 +82,9 @@ public interface UserService extends IService<User> {
      * @param request
      * @return
      */
-    public boolean isAdmin(HttpServletRequest request);
+    boolean isAdmin(HttpServletRequest request);
+
+    Page<User> recommendUsers(long pageSize, long pageNum, HttpServletRequest request);
 
     boolean isAdmin(User loginUser);
 }
