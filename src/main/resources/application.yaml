@@ -19,7 +19,7 @@ mybatis-plus:
       table-prefix:  # 设置表的前缀
   configuration:
     map-underscore-to-camel-case: true #开启驼峰命名
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 spring:
   session:
     # session 过期时间
@@ -64,4 +64,4 @@ knife4j:
   basic:
     password:
     username:
-    enable: true
+    enable: false
