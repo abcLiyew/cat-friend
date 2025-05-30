@@ -22,7 +22,6 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Objects;
 
