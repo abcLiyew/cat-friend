@@ -30,7 +30,7 @@ spring:
       save-mode: on_set_attribute
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
-    url: jdbc:mysql:///esdllm
+    url: jdbc:mysql:///esdllm?serverTimezone=Asia/Shanghai
     username:
     password:
     driver-class-name: com.mysql.cj.jdbc.Driver
