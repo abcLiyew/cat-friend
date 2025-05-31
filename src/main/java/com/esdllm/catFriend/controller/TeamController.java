@@ -10,6 +10,8 @@ import com.esdllm.catFriend.model.Team;
 import com.esdllm.catFriend.model.User;
 import com.esdllm.catFriend.model.dto.TeamQuery;
 import com.esdllm.catFriend.model.request.TeamAddRequest;
+import com.esdllm.catFriend.model.request.TeamUpdateRequest;
+import com.esdllm.catFriend.model.vo.TeamUserVo;
 import com.esdllm.catFriend.service.TeamService;
 import com.esdllm.catFriend.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -85,11 +87,12 @@ public class TeamController {
 
     @PostMapping("/update")
     @Operation(summary = "更新队伍")
-    public BaseResponse<Boolean> updateTeam(@RequestBody Team team, HttpServletRequest request) {
-        if (team == null) {
+    public BaseResponse<Boolean> updateTeam(@RequestBody TeamUpdateRequest teamUpdateRequest, HttpServletRequest request) {
+        if (teamUpdateRequest == null) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean update = teamService.updateById(team);
+        User loginUser = userService.getLoginUser(request);
+        boolean update = teamService.updateTeam(teamUpdateRequest,loginUser);
         if (!update) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "更新队伍失败");
         }
@@ -111,22 +114,17 @@ public class TeamController {
 
     @GetMapping("/list")
     @Operation(summary = "获取队伍列表")
-    public BaseResponse<List<Team>> listTeams(@ParameterObject TeamQuery teamQuery, HttpServletRequest request) {
+    public BaseResponse<List<TeamUserVo>> listTeams(@ParameterObject TeamQuery teamQuery, HttpServletRequest request) {
         if (teamQuery == null){
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        Team team= new Team();
-        try {
-            BeanUtils.copyProperties(team, teamQuery);
-        } catch (Exception e) {
-            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
-        }
-        QueryWrapper<Team> queryWrapper = new QueryWrapper<>(team);
-        List<Team> teamList = teamService.list(queryWrapper);
+        boolean admin = userService.isAdmin(request);
+        List<TeamUserVo> teamList = teamService.listTeams(teamQuery, admin);
         if (CollectionUtils.isEmpty(teamList)) {
             throw new BusinessException(ErrorCode.NULL_ERROR);
         }
         return ResultUtils.success(teamList);
+
     }
 
     @GetMapping("/list/page")

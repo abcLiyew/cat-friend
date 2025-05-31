@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.util.Date;
 
+/**
+ * 创建队伍请求体
+ */
 @Data
 public class TeamAddRequest {
     /**
