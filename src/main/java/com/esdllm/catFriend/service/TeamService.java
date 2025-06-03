@@ -4,6 +4,7 @@ import com.esdllm.catFriend.model.Team;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.esdllm.catFriend.model.User;
 import com.esdllm.catFriend.model.dto.TeamQuery;
+import com.esdllm.catFriend.model.request.TeamJoinRequest;
 import com.esdllm.catFriend.model.request.TeamUpdateRequest;
 import com.esdllm.catFriend.model.vo.TeamUserVo;
 
@@ -41,4 +42,6 @@ public interface TeamService extends IService<Team> {
      * @return 是否成功
      */
     boolean updateTeam(TeamUpdateRequest teamUpdateRequest, User loginUser);
+
+    boolean joinTeam(TeamJoinRequest teamJoinRequest, User loginUser);
 }

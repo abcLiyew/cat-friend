@@ -10,6 +10,7 @@ import com.esdllm.catFriend.model.Team;
 import com.esdllm.catFriend.model.User;
 import com.esdllm.catFriend.model.dto.TeamQuery;
 import com.esdllm.catFriend.model.request.TeamAddRequest;
+import com.esdllm.catFriend.model.request.TeamJoinRequest;
 import com.esdllm.catFriend.model.request.TeamUpdateRequest;
 import com.esdllm.catFriend.model.vo.TeamUserVo;
 import com.esdllm.catFriend.service.TeamService;
@@ -148,6 +149,16 @@ public class TeamController {
             throw new BusinessException(ErrorCode.NULL_ERROR);
         }
         return ResultUtils.success(teamPage);
+    }
+    @PostMapping("/join")
+    @Operation(summary = "加入队伍", description = "加入队伍")
+    public BaseResponse<Boolean> joinTeam(@RequestBody TeamJoinRequest teamJoinRequest, HttpServletRequest request) {
+        if (teamJoinRequest == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        boolean result = teamService.joinTeam(teamJoinRequest, loginUser);
+        return ResultUtils.success(result);
     }
 }
 
