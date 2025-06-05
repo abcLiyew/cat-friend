@@ -1,4 +1,4 @@
-package com.esdllm.catFriend.contant;
+package com.esdllm.catFriend.constant;
 
 /**
  * 类名 : UserContant
@@ -9,7 +9,7 @@ package com.esdllm.catFriend.contant;
  * <b>创建日期</b><br> 2024/11/26 21:47
  * @version 1.0.1
  */
-public interface UserContant {
+public interface UserConstant {
     /**
      * 用户登录态键
      */

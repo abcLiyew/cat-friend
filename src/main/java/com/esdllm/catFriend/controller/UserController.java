@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.esdllm.catFriend.common.BaseResponse;
 import com.esdllm.catFriend.common.ErrorCode;
 import com.esdllm.catFriend.common.ResultUtils;
-import com.esdllm.catFriend.contant.UserContant;
+import com.esdllm.catFriend.constant.UserConstant;
 import com.esdllm.catFriend.exception.BusinessException;
 import com.esdllm.catFriend.model.User;
 import com.esdllm.catFriend.model.request.UserLoginRequest;
@@ -174,7 +174,7 @@ public class UserController {
         if(id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR,"id为空！");
         }
-        Object user = request.getSession().getAttribute(UserContant.User_LOGIN_STATE);
+        Object user = request.getSession().getAttribute(UserConstant.User_LOGIN_STATE);
         User currentUser = (User) user;
         if(currentUser == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN,"用户未登录");
@@ -200,7 +200,7 @@ public class UserController {
     @GetMapping("/current")
     @Operation(summary = "获取当前登录用户")
     public BaseResponse<User> getCurrentUser( HttpServletRequest request) {
-        Object userObject = request.getSession().getAttribute(UserContant.User_LOGIN_STATE);
+        Object userObject = request.getSession().getAttribute(UserConstant.User_LOGIN_STATE);
         User currentUser = (User) userObject;
         if(currentUser == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN,"用户未登录");
@@ -210,7 +210,7 @@ public class UserController {
         User user = userService.getById(userId);
         User safetyUser = userService.getSafetyUser(user);
         //将新查到的数据更新到session中
-        request.getSession().setAttribute(UserContant.User_LOGIN_STATE,safetyUser);
+        request.getSession().setAttribute(UserConstant.User_LOGIN_STATE,safetyUser);
         return ResultUtils.success(safetyUser);
     }
     @GetMapping("/search/tags")

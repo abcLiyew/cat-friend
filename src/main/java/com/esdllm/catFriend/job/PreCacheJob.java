@@ -2,7 +2,7 @@ package com.esdllm.catFriend.job;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.esdllm.catFriend.contant.UserContant;
+import com.esdllm.catFriend.constant.UserConstant;
 import com.esdllm.catFriend.model.User;
 import com.esdllm.catFriend.service.UserService;
 import jakarta.annotation.Resource;
@@ -42,7 +42,7 @@ public class PreCacheJob {
                 ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
 
                 for (Long userId : mainUserIdList) {
-                    String redisKey = UserContant.redisKeyUser(userId);
+                    String redisKey = UserConstant.redisKeyUser(userId);
                     //查数据库
                     QueryWrapper<User> queryWrapper = new QueryWrapper<>();
                     Page<User> userPage = userService.page(new Page<>(1,20),queryWrapper);

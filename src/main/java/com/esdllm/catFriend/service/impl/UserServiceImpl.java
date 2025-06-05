@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.esdllm.catFriend.common.ErrorCode;
-import com.esdllm.catFriend.contant.UserContant;
+import com.esdllm.catFriend.constant.UserConstant;
 import com.esdllm.catFriend.exception.BusinessException;
 import com.esdllm.catFriend.model.User;
 import com.esdllm.catFriend.service.UserService;
@@ -154,7 +154,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         // 4.记录用户的登录状态
         HttpSession session = request.getSession();
-        session.setAttribute(UserContant.User_LOGIN_STATE, safetyUser);
+        session.setAttribute(UserConstant.User_LOGIN_STATE, safetyUser);
         // 5. 返回脱敏后的用户信息
         return safetyUser;
     }
@@ -189,7 +189,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
     @Override
     public int userLogout(HttpServletRequest request) {
-        request.getSession().removeAttribute(UserContant.User_LOGIN_STATE);
+        request.getSession().removeAttribute(UserConstant.User_LOGIN_STATE);
         return 1;
     }
 
@@ -264,7 +264,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         if (request == null){
             throw new BusinessException(ErrorCode.NOT_LOGIN);
         }
-        Object userObj = request.getSession().getAttribute(UserContant.User_LOGIN_STATE);
+        Object userObj = request.getSession().getAttribute(UserConstant.User_LOGIN_STATE);
         if (userObj == null) {
             throw new BusinessException(ErrorCode.NOT_LOGIN);
         }
@@ -300,9 +300,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     @Override
     public boolean isAdmin(HttpServletRequest request) {
-        Object userObject = request.getSession().getAttribute(UserContant.User_LOGIN_STATE);
+        Object userObject = request.getSession().getAttribute(UserConstant.User_LOGIN_STATE);
         User user = (User) userObject;
-        return user!= null && user.getUserRole() == UserContant.ADMIN_ROLE;
+        return user!= null && user.getUserRole() == UserConstant.ADMIN_ROLE;
     }
 
     @Override
@@ -310,7 +310,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         User loginUser = getLoginUser(request);
         //如果缓存里有，直接读缓存
-        String redisKey = UserContant.redisKeyUser(loginUser.getId());
+        String redisKey = UserConstant.redisKeyUser(loginUser.getId());
         ValueOperations<String, Object> opsForValue = redisTemplate.opsForValue();
         Page<User> userPage = (Page<User>) opsForValue.get(redisKey);
         if(userPage != null&&pageNum>1) {
@@ -336,7 +336,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     @Override
     public boolean isAdmin(User loginUser) {
-        return loginUser!= null && loginUser.getUserRole() == UserContant.ADMIN_ROLE;
+        return loginUser!= null && loginUser.getUserRole() == UserConstant.ADMIN_ROLE;
     }
 }
 

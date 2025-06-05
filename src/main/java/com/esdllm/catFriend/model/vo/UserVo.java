@@ -1,21 +1,24 @@
 package com.esdllm.catFriend.model.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 用户包装类（脱敏）
  */
 @Data
-public class UserVo {
+public class UserVo implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -979546047587849793L;
     /**
      * 用户id
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 
     /**
