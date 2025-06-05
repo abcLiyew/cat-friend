@@ -2,13 +2,19 @@ package com.esdllm.catFriend.model.request;
 
 import lombok.Data;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * 创建队伍请求体
  */
 @Data
-public class TeamAddRequest {
+public class TeamAddRequest implements Serializable {
+
+
+    @Serial
+    private static final long serialVersionUID = -7037724168709209969L;
     /**
      * 队伍名称
      */

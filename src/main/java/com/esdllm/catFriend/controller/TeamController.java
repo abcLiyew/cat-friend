@@ -11,6 +11,7 @@ import com.esdllm.catFriend.model.User;
 import com.esdllm.catFriend.model.dto.TeamQuery;
 import com.esdllm.catFriend.model.request.TeamAddRequest;
 import com.esdllm.catFriend.model.request.TeamJoinRequest;
+import com.esdllm.catFriend.model.request.TeamQuitRequest;
 import com.esdllm.catFriend.model.request.TeamUpdateRequest;
 import com.esdllm.catFriend.model.vo.TeamUserVo;
 import com.esdllm.catFriend.service.TeamService;
@@ -74,12 +75,13 @@ public class TeamController {
     }
 
     @PostMapping("/delete")
-    @Operation(summary = "删除队伍")
+    @Operation(summary = "解散队伍")
     public BaseResponse<Boolean> deleteTeam(@RequestBody long id, HttpServletRequest request) {
         if (id <= 0) {
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        boolean delete = teamService.removeById(id);
+        User loginUser = userService.getLoginUser(request);
+        boolean delete = teamService.deleteTeam(id,loginUser);
         if (!delete) {
             throw new BusinessException(ErrorCode.SYSTEM_ERROR, "删除队伍失败");
         }
@@ -158,6 +160,16 @@ public class TeamController {
         }
         User loginUser = userService.getLoginUser(request);
         boolean result = teamService.joinTeam(teamJoinRequest, loginUser);
+        return ResultUtils.success(result);
+    }
+    @PostMapping("/quit")
+    @Operation(summary = "退出队伍", description = "退出队伍")
+    public BaseResponse<Boolean> quitTeam(@RequestBody TeamQuitRequest teamQuitRequest, HttpServletRequest request) {
+        if (teamQuitRequest == null){
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        User loginUser = userService.getLoginUser(request);
+        boolean result = teamService.quitTeam(teamQuitRequest, loginUser);
         return ResultUtils.success(result);
     }
 }

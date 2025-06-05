@@ -4,12 +4,18 @@ import com.esdllm.catFriend.model.request.PageRequest;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 /**
  * 队伍查询封装
  */
 @EqualsAndHashCode(callSuper = true)
 @Data
-public class TeamQuery extends PageRequest {
+public class TeamQuery extends PageRequest implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = -3091160692153699578L;
     /**
      * 用户id
      */

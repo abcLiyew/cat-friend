@@ -1,15 +1,16 @@
 package com.esdllm.catFriend.model.request;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import lombok.Data;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.Date;
 
 @Data
-public class TeamUpdateRequest {
+public class TeamUpdateRequest implements Serializable {
 
+    @Serial
+    private static final long serialVersionUID = -4186899066051454303L;
     /**
      * id
      */

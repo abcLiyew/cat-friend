@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.esdllm.catFriend.model.User;
 import com.esdllm.catFriend.model.dto.TeamQuery;
 import com.esdllm.catFriend.model.request.TeamJoinRequest;
+import com.esdllm.catFriend.model.request.TeamQuitRequest;
 import com.esdllm.catFriend.model.request.TeamUpdateRequest;
 import com.esdllm.catFriend.model.vo.TeamUserVo;
 
@@ -29,7 +30,7 @@ public interface TeamService extends IService<Team> {
      * 获取队伍列表
      *
      * @param teamQuery 队伍查询参数
-     * @param isAdmin
+     * @param isAdmin 是否管理员
      * @return 队伍列表
      */
     List<TeamUserVo> listTeams(TeamQuery teamQuery, boolean isAdmin);
@@ -43,5 +44,30 @@ public interface TeamService extends IService<Team> {
      */
     boolean updateTeam(TeamUpdateRequest teamUpdateRequest, User loginUser);
 
+    /**
+     * 加入队伍
+     *
+     * @param teamJoinRequest 加入队伍参数
+     * @param loginUser 登录用户
+     * @return 是否成功
+     */
     boolean joinTeam(TeamJoinRequest teamJoinRequest, User loginUser);
+
+    /**
+     * 退出队伍
+     *
+     * @param teamQuitRequest 退出队伍参数
+     * @param loginUser 登录用户
+     * @return 是否成功
+     */
+    boolean quitTeam(TeamQuitRequest teamQuitRequest, User loginUser);
+
+    /**
+     * 删除队伍
+     *
+     * @param id        队伍id
+     * @param loginUser 登录用户
+     * @return 是否成功
+     */
+    boolean deleteTeam(long id, User loginUser);
 }
